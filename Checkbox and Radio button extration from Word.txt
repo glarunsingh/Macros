@@ -1,0 +1,81 @@
+Sub TransposeArray()
+
+    Dim outputArr As Variant
+    Dim str_Retrivedvalues As String
+    
+    
+    'Call Return Function
+    outputArr = ActiveXControlByName()
+    
+    'Print values to Immediate Window (Ctrl + G to view)
+    
+     For x = LBound(outputArr) To UBound(outputArr)
+     'Debug.Print outputArr(x)
+     If outputArr(x) = " " Then
+     str_Retrivedvalues = outputArr(x)
+     Else
+     str_Retrivedvalues = str_Retrivedvalues & "," & outputArr(x)
+     End If
+     Next x
+
+Debug.Print str_Retrivedvalues
+
+Dim TextFile As Integer
+'Dim fld As Object
+Dim str_TempFilePath As String
+str_TempFilePath = "\\de-dfs02.ds.incyte.com\DeptShares\DD_RPA_PROJECTS\Development\0211_RetrieveProductspecsforreporting\Input\export_results.txt"
+
+Set fld = CreateObject("Scripting.FileSystemObject")
+
+'define FreeFile to the variable file number
+TextFile = FreeFile
+
+'using append command to add text to the end of the file
+Open str_TempFilePath For Output As TextFile
+
+'add data to the text file
+Print #TextFile, str_Retrivedvalues
+Close #TextFile
+    
+End Sub
+
+Function ActiveXControlByName() As Variant
+'
+' ActiveXControlByName Macro
+'
+'
+Dim ils As Word.InlineShape
+Dim myArray() As Variant
+    
+'    Set wordapp = CreateObject("word.Application")
+'    wordapp.Documents.Open "C:\Users\agangaramsingh\OneDrive - Incyte Corporation\Material Specification Data Transfer Project\1000L CUSTOM MIXER (AEGIS5-14) - 10000676 _Material specifi.docx"
+'
+    For Each ils In ActiveDocument.InlineShapes
+        If ils.Type = wdInlineShapeOLEControlObject Then
+        
+         If ils.OLEFormat.ClassType = "Forms.OptionButton.1" Then
+                Set cb = ils.OLEFormat.Object
+                If cb.Value = True Then
+                     ReDim Preserve myArray(x)
+                     myArray(x) = cb.Caption
+                     x = x + 1
+                     'MsgBox cb.Caption
+                 End If
+            End If
+            
+            
+            If ils.OLEFormat.ClassType = "Forms.CheckBox.1" Then
+                Set cb = ils.OLEFormat.Object
+                 If cb.Value = True Then
+                 ReDim Preserve myArray(x)
+                     myArray(x) = cb.Caption
+                     x = x + 1
+                     'MsgBox cb.Caption
+                 End If
+            
+            End If
+        End If
+    Next
+    
+ActiveXControlByName = myArray
+End Function
